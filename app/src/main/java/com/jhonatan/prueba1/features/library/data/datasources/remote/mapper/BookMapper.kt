@@ -8,7 +8,7 @@ fun BookDto.toDomain(): Book {
     return Book(
         id = this.id,
         title = this.title,
-        author = this.authorNames?.firstOrNull() ?: "Unknown Author",
+        author = this.authorNames?.firstOrNull() ?: "Autor desconocido",
         imageUrl = if (this.coverId != null)
             "https://covers.openlibrary.org/b/id/${this.coverId}-M.jpg"
         else ""

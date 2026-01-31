@@ -7,6 +7,6 @@ import retrofit2.http.Query
 interface OpenLibraryApi {
     @GET("search.json")
     suspend fun searchBooks(
-        @Query("q") query: String = "golang"
+        @Query("q") query: String
     ): BooksResponse
 }

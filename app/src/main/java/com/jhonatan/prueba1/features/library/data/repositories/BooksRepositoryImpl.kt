@@ -10,8 +10,8 @@ class BooksRepositoryImpl(
     private val api: OpenLibraryApi
 ) : BooksRepository {
 
-    override suspend fun getBooks(): List<Book> {
-        val response = api.searchBooks()
+    override suspend fun getBooks(query: String): List<Book> {
+        val response = api.searchBooks(query)
         return response.docs.map { it.toDomain() }
     }
 }

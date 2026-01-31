@@ -3,6 +3,7 @@ package com.jhonatan.prueba1.features.library.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jhonatan.prueba1.features.library.domain.entities.Book
 import com.jhonatan.prueba1.features.library.domain.usecases.GetBooksUseCase
 import com.jhonatan.prueba1.features.library.presentation.screens.BooksUiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,19 +17,24 @@ class BooksViewModel(
     private val _uiState = MutableStateFlow(BooksUiState())
     val uiState = _uiState.asStateFlow()
 
-    init {
-        loadBooks()
-    }
+    fun onSearch(query: String) {
+        if (query.isBlank()) return
 
-    private fun loadBooks() {
-        _uiState.update { it.copy(isLoading = true) }
+        _uiState.update { it.copy(isLoading = true, books = emptyList(), error = null) }
+
         viewModelScope.launch {
-            val result = getBooksUseCase()
-            _uiState.update { state ->
+            try {
+                val result = getBooksUseCase(query)
                 result.fold(
-                    onSuccess = { list -> state.copy(isLoading = false, books = list) },
-                    onFailure = { error -> state.copy(isLoading = false, error = error.message) }
+                    onSuccess = { list -> _uiState.update { it.copy(isLoading = false, books = list) } },
+                    onFailure = { err ->
+                        println("ERROR_TECNICO: ${err.localizedMessage}")
+                        _uiState.update { it.copy(isLoading = false, error = "Error en el servidor") }
+                    }
                 )
+            } catch (e: Exception) {
+                println("ERROR_CRITICO: ${e.message}")
+                _uiState.update { it.copy(isLoading = false, error = "Sin conexión a internet") }
             }
         }
     }

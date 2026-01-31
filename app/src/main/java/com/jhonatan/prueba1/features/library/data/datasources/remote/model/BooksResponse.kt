@@ -10,5 +10,5 @@ data class BookDto(
     @SerializedName("key") val id: String,
     @SerializedName("title") val title: String,
     @SerializedName("author_name") val authorNames: List<String>?,
-    @SerializedName("cover_i") val coverId: Int?
+    @SerializedName("cover_i") val coverId: Int?,
 )

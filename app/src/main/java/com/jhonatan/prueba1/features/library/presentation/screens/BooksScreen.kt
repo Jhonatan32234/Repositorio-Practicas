@@ -6,6 +6,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,37 +25,34 @@ import com.jhonatan.prueba1.features.library.presentation.viewmodel.BooksViewMod
 fun BooksScreen(factory: BooksViewModelFactory) {
     val viewModel: BooksViewModel = viewModel(factory = factory)
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    var searchQuery by remember { mutableStateOf("") }
 
     Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text("Libreria", fontWeight = FontWeight.ExtraBold) }
-            )
-        }
+        topBar = { CenterAlignedTopAppBar(title = { Text("Buscador de Libros") }) }
     ) { innerPadding ->
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .padding(innerPadding)) {
-            when {
-                uiState.isLoading -> {
+        Column(modifier = Modifier.padding(innerPadding)) {
+            Row(modifier = Modifier.fillMaxWidth().padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+                OutlinedTextField(
+                    value = searchQuery,
+                    onValueChange = { searchQuery = it },
+                    label = { Text("Buscar libro...") },
+                    modifier = Modifier.weight(1f),
+                    singleLine = true
+                )
+                Button(
+                    onClick = { viewModel.onSearch(searchQuery) },
+                    modifier = Modifier.padding(start = 8.dp)
+                ) {
+                    Text("Ir")
+                }
+            }
+
+            Box(modifier = Modifier.fillMaxSize()) {
+                if (uiState.isLoading) {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                }
-                uiState.error != null -> {
-                    Text(
-                        text = uiState.error ?: "Error",
-                        modifier = Modifier.align(Alignment.Center),
-                        color = Color.Red
-                    )
-                }
-                else -> {
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        contentPadding = PaddingValues(8.dp)
-                    ) {
-                        items(uiState.books) { book ->
-                            BookCard(book = book)
-                        }
+                } else {
+                    LazyColumn {
+                        items(uiState.books) { book -> BookCard(book = book) }
                     }
                 }
             }

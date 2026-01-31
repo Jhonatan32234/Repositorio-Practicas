@@ -6,9 +6,9 @@ import com.jhonatan.prueba1.features.library.domain.entities.Book
 class GetBooksUseCase(
     private val repository: BooksRepository
 ) {
-    suspend operator fun invoke(): Result<List<Book>> {
+    suspend operator fun invoke(query: String): Result<List<Book>> {
         return try {
-            val books = repository.getBooks()
+            val books = repository.getBooks(query)
             if (books.isEmpty()) {
                 Result.failure(Exception("No books found"))
             } else {
