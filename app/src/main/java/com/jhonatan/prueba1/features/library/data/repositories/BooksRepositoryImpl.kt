@@ -1,12 +1,13 @@
 package com.jhonatan.prueba1.features.library.data.repositories
 
 
-import com.jhonatan.prueba1.core.network.OpenLibraryApi
+import com.jhonatan.prueba1.features.library.data.datasources.remote.api.OpenLibraryApi
 import com.jhonatan.prueba1.features.library.data.datasources.remote.mapper.toDomain
 import com.jhonatan.prueba1.features.library.domain.entities.Book
 import com.jhonatan.prueba1.features.library.domain.repositories.BooksRepository
+import javax.inject.Inject
 
-class BooksRepositoryImpl(
+class BooksRepositoryImpl @Inject constructor(
     private val api: OpenLibraryApi
 ) : BooksRepository {
 

@@ -6,18 +6,26 @@ import androidx.lifecycle.viewModelScope
 import com.jhonatan.prueba1.features.library.domain.entities.Book
 import com.jhonatan.prueba1.features.library.domain.usecases.GetBooksUseCase
 import com.jhonatan.prueba1.features.library.presentation.screens.BooksUiState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class BooksViewModel(
+@HiltViewModel
+class BooksViewModel @Inject constructor(
     private val getBooksUseCase: GetBooksUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(BooksUiState())
     val uiState = _uiState.asStateFlow()
 
-    fun onSearch(query: String) {
+    fun onSearchQueryChange(newQuery: String) {
+        _uiState.update { it.copy(searchQuery = newQuery) }
+    }
+
+    fun onSearch() {
+        val query = _uiState.value.searchQuery
         if (query.isBlank()) return
 
         _uiState.update { it.copy(isLoading = true, books = emptyList(), error = null) }

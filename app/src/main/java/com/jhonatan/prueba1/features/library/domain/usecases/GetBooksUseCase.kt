@@ -2,8 +2,9 @@ package com.jhonatan.prueba1.features.library.domain.usecases
 
 import com.jhonatan.prueba1.features.library.domain.repositories.BooksRepository
 import com.jhonatan.prueba1.features.library.domain.entities.Book
+import javax.inject.Inject
 
-class GetBooksUseCase(
+class GetBooksUseCase @Inject constructor(
     private val repository: BooksRepository
 ) {
     suspend operator fun invoke(query: String): Result<List<Book>> {
